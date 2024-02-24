@@ -1,0 +1,88 @@
+/* Temel stil ayarları */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 30px;
+}
+
+h2 {
+    text-align: center;
+    margin: 20px;
+}
+
+div p {
+    text-align: center;
+    background-color: #f0f0f0;
+    margin-bottom: 10px; /* Liste öğeleri arasına boşluk bırakmak için */
+    margin-left: 120px;
+    margin-right: 120px;
+    padding: 10px; /* Liste öğelerine iç içe yerleşen içerikler için boşluk bırakmak için */
+}
+
+#showDate {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    font-size: large;
+}
+
+#content {
+    margin-bottom: 10px; /* Liste öğeleri arasına boşluk bırakmak için */
+    margin-left: 120px;
+    margin-right: 120px;
+    background-color: #f0f0f0; /* Liste öğelerinin arka plan rengini belirlemek için */
+    padding: 10px; /* Liste öğelerine iç içe yerleşen içerikler için boşluk bırakmak için */
+}
+
+#link {
+    margin-bottom: 10px; /* Liste öğeleri arasına boşluk bırakmak için */
+    margin-left: 120px;
+    margin-right: 120px;
+    background-color: #f0f0f0; /* Liste öğelerinin arka plan rengini belirlemek için */
+    padding: 10px; /* Liste öğelerine iç içe yerleşen içerikler için boşluk bırakmak için */
+    display: block;
+    text-align: center; /* Bağlantıyı ortala */
+}
+
+/* Eğitim detayları */
+.education-details {
+    width: 80%; /* Sayfa içeriğinin genişliği */
+    margin: 50px auto; /* Sayfa içeriğini ortalamak için */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.education-details p {
+    margin-bottom: 20px;
+    text-align: center; /* Paragrafları ortala */
+}
+
+.education-details p:last-child {
+    margin-bottom: 0;
+}
+
+.education-details strong {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Bulunamayan içerik */
+.not-found {
+    text-align: center;
+    margin-top: 50px;
+    color: #555;
+}
+
+.not-found p {
+    font-size: 24px;
+}

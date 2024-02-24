@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experience Details</title>
+  <link rel="stylesheet" th:href="@{/css/details.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="header :: header"></div>
+  <h1>Experience Details</h1>
+  <div th:if="${experiences}">
+    <th:block th:each="experience : ${experiences}">
+        <h2 th:text="${experiences.companyName} "></h2>
+        <p id="content" th:text="${experiences.position}"></p>
+    </th:block>
+  </div>
+  <div th:unless="${experiences}">
+    <h2>Experience not found</h2>
+  </div>
+  <script src="/script/admin.js"></script>
+</body>
+</html>

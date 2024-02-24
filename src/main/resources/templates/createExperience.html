@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Experience</title>
+  <link rel="stylesheet" th:href="@{/css/createSection.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="header :: header"></div>
+
+<h2>Create a New Experience</h2>
+
+<form action="/admin/add-experience" method="post" th:object="${experience}">
+  <label for="title">Company Name:</label>
+  <input type="text" id="title" name="title" th:field="*{companyName}" required><br>
+
+  <label for="content">Position</label>
+  <textarea id="content" name="content" th:field="*{position}" required></textarea><br>
+
+
+  <button type="submit" th:href="home">Create Experience</button>
+</form>
+<script src="/script/admin.js"></script>
+</body>
+</html>

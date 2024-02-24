@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  app:
+    image: 'portfolio:latest'
+    build:
+      context: .
+    container_name: portfolio
+    ports:
+      - 9090:8080

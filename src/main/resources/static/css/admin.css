@@ -1,0 +1,102 @@
+/* admin.css */
+body {
+    font-family: Arial, sans-serif;
+}
+
+header, nav {
+    width: 100%;
+    background-color: #333; /* Change to #333 to match login.css */
+    padding: 0.3rem; /* Reduce padding further to make the header even shorter */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Change to flex-end to match login.css */
+    text-shadow: #363535 2px 2px 0.2rem;
+}
+
+nav {
+    background-color: #333; /* Change to #333 to match login.css */
+    display: flex;
+    justify-content: space-around; /* Change to space-around to match login.css */
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding-right: 10px; /* Keep padding-right as it is in login.css */
+}
+
+nav a:hover {
+    color: #007bff;
+    background-color: #555; /* Add background-color to match login.css */
+}
+
+.header-left {
+    float: left;
+}
+
+.header-right {
+    position: relative;
+}
+
+#menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+#menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+#menu a:hover {
+    background-color: #f1f1f1;
+}
+
+.header-right button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.header-right button img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    float: right;
+    margin-top: 10px;
+}
+
+#menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 150px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#menu a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+}
+
+#menu a:hover {
+    background-color: #f1f1f1;
+}
+
+#menubutton:focus ~ #menu {
+    display: block;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Post</title>
+  <link rel="stylesheet" th:href="@{/css/createSection.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="header :: header"></div>
+  <h2>Create a New Post</h2>
+
+  <form action="/admin/add-post" method="post" th:object="${post}">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" th:field="*{title}" required><br>
+
+    <label for="content">Content:</label>
+    <textarea id="content" name="content" th:field="*{content}" required></textarea><br>
+
+    <button type="submit" th:href="home">Create Post</button>
+  </form>
+  <script src="/script/admin.js"></script>
+</body>
+</html>

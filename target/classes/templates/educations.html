@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ali Riza Aynaci</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/education.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="header :: header"></div>
+<h1>My Educations</h1>
+<ul>
+    <th:block th:each="education : ${educations}">
+        <li>
+            <a th:href="@{'/educations/' + ${education.id}}"> <!-- Link to individual post page -->
+                <strong>Education: </strong>
+                <span th:text="${education.department}"></span>
+            </a>
+        </li>
+    </th:block>
+</ul>
+<script src="/script/admin.js"></script>
+</body>
+</html>

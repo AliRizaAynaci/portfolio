@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Education</title>
+  <link rel="stylesheet" th:href="@{/css/createSection.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="header :: header"></div>
+
+<h2>Create a New Education</h2>
+
+<form action="/admin/add-education" method="post" th:object="${education}">
+  <label for="title">Education institution:</label>
+  <input type="text" id="title" name="title" th:field="*{institution}" required><br>
+
+  <label for="degree">Degree</label>
+  <textarea id="degree" name="degree" th:field="*{degree}" required></textarea><br>
+
+  <label for="department">Department</label>
+  <textarea id="department" name="department" th:field="*{department}" required></textarea><br>
+
+  <button type="submit" th:href="home">Create Education</button>
+</form>
+<script src="/script/admin.js"></script>
+</body>
+</html>
