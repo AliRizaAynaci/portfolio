@@ -34,7 +34,7 @@ public class ProfileController {
 
     @GetMapping("/admin-profile")
     public String adminProfilePage(Model model) {
-        commonService.prepareModel(model);
+        commonService.prepareModelForProfile(model);
         return "admin-profile";
     }
 
