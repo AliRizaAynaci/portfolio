@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ali Rıza Aynacı</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/education.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <script src="/script/toggle.js"></script>
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+    <h1>My Projects</h1>
+    <ul>
+        <!-- Bu kısımda tüm postları listelemek için bir döngü kullanabilirsiniz -->
+        <th:block th:each="project : ${projects}">
+            <li>
+                <a th:href="@{'/admin-projects/' + ${project.id}}">
+                    <span th:text="${project.projectName}"></span>
+                </a>
+            </li>
+        </th:block>
+
+    </ul>
+    <script src="/script/admin.js"></script>
+</body>
+</html>

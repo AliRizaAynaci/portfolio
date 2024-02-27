@@ -5,6 +5,7 @@ import com.alirizaaynaci.portfolio.model.Experience;
 import com.alirizaaynaci.portfolio.service.AuthenticationService;
 import com.alirizaaynaci.portfolio.service.CommonService;
 import com.alirizaaynaci.portfolio.service.ExperienceService;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,12 @@ public class ExperienceController {
         return "experiences";
     }
 
+    @GetMapping("admin-experiences")
+    public String adminExperiencePage(Model model) {
+        commonService.prepareModel(model);
+        return "admin-experiences";
+    }
+
     @GetMapping("/experiences/{experienceId}")
     public String getExperienceById(@PathVariable Long experienceId, Model model) {
         Optional<Experience> experiences = experienceService.getExperienceById(experienceId);
@@ -42,6 +49,16 @@ public class ExperienceController {
             model.addAttribute("adminExists", authenticationService.getAdminExists());
         }
         return "experience-details";
+    }
+
+    @GetMapping("/admin-experiences/{experienceId}")
+    public String getExperienceByIdForAdmin(@PathVariable Long experienceId, Model model) {
+        Optional<Experience> experiences = experienceService.getExperienceById(experienceId);
+        experiences.ifPresent(experience -> model.addAttribute("experiences", experience));
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+        }
+        return "admin-experience-details";
     }
 
     @GetMapping("/admin/create-experience")
@@ -55,8 +72,12 @@ public class ExperienceController {
     }
 
     @PostMapping("/admin/add-experience")
-    public String createEducation(@ModelAttribute Experience experience) {
+    public String createEducation(@ModelAttribute Experience experience, Model model) {
         experienceService.createExperience(experience);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminEsists", authenticationService.getAdminExists());
+            return "redirect:/admin-experiences";
+        }
         return "redirect:/experiences";
     }
 }

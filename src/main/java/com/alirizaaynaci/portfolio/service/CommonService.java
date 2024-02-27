@@ -32,8 +32,11 @@ public class CommonService {
         List<Post> posts = postService.getAllPost();
         Collections.reverse(posts);
         List<Education> educations = educationService.getAllEducation();
+        Collections.reverse(educations);
         List<Experience> experiences = experienceService.getAllExperiences();
+        Collections.reverse(experiences);
         List<Project> projects = projectService.getAllProject();
+        Collections.reverse(projects);
         if (authenticationService.getAdminExists()) {
             model.addAttribute("adminExists", authenticationService.getAdminExists());
         }

@@ -29,7 +29,7 @@ public class HomePageController {
     public String home(Model model) {
         authenticationService.setAdminExists(true);
         commonService.prepareModel(model);
-        return "index";
+        return "admin-index";
     }
 
 }

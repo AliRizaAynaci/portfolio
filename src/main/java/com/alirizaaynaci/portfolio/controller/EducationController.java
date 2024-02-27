@@ -23,7 +23,8 @@ public class EducationController {
     private final AuthenticationService authenticationService;
     private final CommonService commonService;
 
-    public EducationController(EducationService educationService, AuthenticationService authenticationService, CommonService commonService) {
+    public EducationController(EducationService educationService, AuthenticationService authenticationService,
+                               CommonService commonService) {
         this.educationService = educationService;
         this.authenticationService = authenticationService;
         this.commonService = commonService;
@@ -34,6 +35,11 @@ public class EducationController {
         commonService.prepareModel(model);
         return "educations";
     }
+    @GetMapping("/admin-educations")
+    public String adminEducationPage(Model model) {
+        commonService.prepareModel(model);
+        return "admin-educations";
+    }
 
     @GetMapping("/educations/{educationId}")
     public String getEducationById(@PathVariable Long educationId, Model model) {
@@ -43,6 +49,16 @@ public class EducationController {
             model.addAttribute("adminExists", authenticationService.getAdminExists());
         }
         return "education-details";
+    }
+
+    @GetMapping("/admin-educations/{educationId}")
+    public String getEducationByIdForAdmin(@PathVariable Long educationId, Model model) {
+        Optional<Education> education = educationService.getEducationById(educationId);
+        education.ifPresent(edu -> model.addAttribute("education", edu));
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+        }
+        return "admin-education-details";
     }
 
     @GetMapping("/admin/create-education")
@@ -56,8 +72,12 @@ public class EducationController {
     }
 
     @PostMapping("/admin/add-education")
-    public String createEducation(@ModelAttribute Education education) {
+    public String createEducation(@ModelAttribute Education education, Model model) {
         educationService.createEducation(education);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminEsists", authenticationService.getAdminExists());
+            return "redirect:/admin-educations";
+        }
         return "redirect:/educations";
     }
 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Rıza Aynacı</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/education.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <div th:replace="admin-header :: header"></div>
+
+    <h1>My Posts</h1>
+    <ul>
+        <!-- Bu kısımda tüm postları listelemek için bir döngü kullanabilirsiniz -->
+        <th:block th:each="post : ${posts}">
+            <li>
+                <a th:href="@{'/admin-posts/' + ${post.id}}"> <!-- Link to individual post page -->
+                    <h2 th:text="${post.title} "></h2>
+                </a>
+                <p id="showDate" th:text="${post.creationDate}"></p>
+            </li>
+        </th:block>
+    </ul>
+
+    <script src="/script/admin.js"></script>
+</body>
+</html>

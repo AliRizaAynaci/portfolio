@@ -32,6 +32,11 @@ public class ProfileController {
         return "profile";
     }
 
+    @GetMapping("/admin-profile")
+    public String adminProfilePage(Model model) {
+        commonService.prepareModel(model);
+        return "admin-profile";
+    }
 
     @PostMapping("/alirizaaynaci/update")
     public String updateProfile(@ModelAttribute Profile updatedProfile) {
@@ -50,8 +55,12 @@ public class ProfileController {
     }
 
     @PostMapping("/admin/add-profile")
-    public String createProfile(@ModelAttribute Profile profile) {
+    public String createProfile(@ModelAttribute Profile profile, Model model) {
         profileService.createProfile(profile);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            return "redirect:/admin-profile";
+        }
         return "redirect:/profile";
     }
 }

@@ -37,6 +37,11 @@ public class ProjectController {
         return "projects";
     }
 
+    @GetMapping("/admin-projects")
+    public String adminProjectsPage(Model model) {
+        commonService.prepareModel(model);
+        return "admin-projects";
+    }
 
     @GetMapping("/projects/{projectId}")
     public String getProjectById(@PathVariable Long projectId, Model model) {
@@ -46,6 +51,16 @@ public class ProjectController {
             model.addAttribute("adminExists", authenticationService.getAdminExists());
         }
         return "project-details";
+    }
+
+    @GetMapping("/admin-projects/{projectId}")
+    public String getProjectByIdForAdmin(@PathVariable Long projectId, Model model) {
+        Optional<Project> projects = projectService.getProjectById(projectId);
+        projects.ifPresent(project -> model.addAttribute("project", project));
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+        }
+        return "admin-project-details";
     }
 
 
@@ -60,8 +75,12 @@ public class ProjectController {
     }
 
     @PostMapping("/admin/add-project")
-    public String createProject(@ModelAttribute Project project) {
+    public String createProject(@ModelAttribute Project project, Model model) {
         projectService.createProject(project);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            return "redirect:/admin-projects";
+        }
         return "redirect:/projects";
     }
 

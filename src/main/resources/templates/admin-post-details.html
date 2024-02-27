@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Details</title>
+  <link rel="stylesheet" th:href="@{/css/details.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+  <h1>Post Details</h1>
+  <div th:if="${post}">
+    <th:block th:each="singlePost : ${post}">
+      <h2 th:if="${singlePost.isPresent()}" th:text="${singlePost.get().title} "></h2>
+      <p id="content" th:if="${singlePost.isPresent()}" th:text="${singlePost.get().content}"></p>
+      <p id="showDate" th:if="${singlePost.isPresent()}" th:text="${singlePost.get().creationDate}"></p>
+    </th:block>
+
+
+  </div>
+  <div th:unless="${post}">
+    <h2>Post not found</h2>
+  </div>
+  <script src="/script/admin.js"></script>
+</body>
+</html>

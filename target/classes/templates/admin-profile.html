@@ -9,7 +9,7 @@
   <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-<div th:replace="header :: header"></div>
+<div th:replace="admin-header :: header"></div>
 <h1>My Profile</h1>
 <div th:if="${profile}">
   <h2 th:text="${profile.username}"></h2>
