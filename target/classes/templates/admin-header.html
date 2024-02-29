@@ -17,7 +17,7 @@
           <a th:if="${adminExists}" href="/admin/create-experience">Add Experience</a>
           <a th:if="${adminExists}" href="/admin/create-post">Add Post</a>
           <a th:if="${adminExists}" href="/admin/create-profile">Add Profile</a>
-          <a th:href="@{/profile}">Profile</a>
+          <a th:if="${adminExists}" href="/admin/update-profile-form">Update Profile</a>
           <a th:if="${adminExists}" href="/logout">Logout</a>
           <a th:unless="${adminExists}" href="/login">Login</a>
         </div>

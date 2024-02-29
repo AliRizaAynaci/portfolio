@@ -31,15 +31,15 @@ public class ProfileService {
     }
 
     public Profile updateProfile(Profile updatedProfile) {
-        Long profileId = updatedProfile.getId();
+        Long profileId = 1L;
         Optional<Profile> existingProfileOptional = profileRepository.findById(profileId);
 
-        if (existingProfileOptional.isPresent()) {
+        if (existingProfileOptional != null) {
             Profile existingProfile = existingProfileOptional.get();
             existingProfile.setUsername(updatedProfile.getUsername());
             existingProfile.setGithubUrl(updatedProfile.getGithubUrl());
-            existingProfile.setLinkedinUrl(updatedProfile.getLinkedinUrl());
             existingProfile.setEmailAddress(updatedProfile.getEmailAddress());
+            existingProfile.setLinkedinUrl(updatedProfile.getLinkedinUrl());
 
             return profileRepository.save(existingProfile);
         } else {
