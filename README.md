@@ -19,7 +19,7 @@ This is a simple portfolio project that showcases various features such as user 
 ## Installation
 1. Clone the repository to your local machine using Git:
    ```bash
-   git clone https://github.com/yourusername/portfolio-project.git
+   git clone https://github.com/AliRizaAynaci/portfolio.git
 
 ## Navigate to the project directory:
 Use your terminal or command prompt to navigate to the project directory:
