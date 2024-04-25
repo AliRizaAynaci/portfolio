@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ali Riza Aynaci</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    <link rel="stylesheet" th:href="@{/css/education.css}" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+    <h1>My Experiences</h1>
+    <ul>
+        <th:block th:each="experience : ${experiences}">
+            <li>
+                <a th:href="@{'/admin-experiences/' + ${experience.id}}"> <!-- Link to individual post page -->
+                    <strong>Experience: </strong>
+                    <span th:text="${experience.companyName}"></span>
+                </a>
+            </li>
+        </th:block>
+    </ul>
+
+    <script src="/script/admin.js"></script>
+
+</body>
+</html>

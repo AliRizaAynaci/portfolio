@@ -1,0 +1,27 @@
+<header>
+  <nav>
+    <a th:href="@{/admin-home}">Home</a>
+    <a th:href="@{/admin-educations}">Education</a>
+    <a th:href="@{/admin-projects}">Projects</a>
+    <a th:href="@{/admin-experiences}">Experience</a>
+    <a th:href="@{/admin-profile}">Profile</a>
+
+    <div class="header">
+      <div class="header-right">
+        <button id="menubutton">
+          <img src="/images/profile_photo.jpg">
+        </button>
+        <div id="menu">
+          <a th:if="${adminExists}" href="/admin/create-education">Add Education</a>
+          <a th:if="${adminExists}" href="/admin/create-project">Add Projects</a>
+          <a th:if="${adminExists}" href="/admin/create-experience">Add Experience</a>
+          <a th:if="${adminExists}" href="/admin/create-post">Add Post</a>
+          <a th:if="${adminExists}" href="/admin/create-profile">Add Profile</a>
+          <a th:if="${adminExists}" href="/admin/update-profile-form">Update Profile</a>
+          <a th:if="${adminExists}" href="/logout">Logout</a>
+          <a th:unless="${adminExists}" href="/login">Login</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -32,15 +32,14 @@ public class ProfileController {
         return "profile";
     }
 
-
-    @PostMapping("/alirizaaynaci/update")
-    public String updateProfile(@ModelAttribute Profile updatedProfile) {
-        profileService.updateProfile(updatedProfile);
-        return "redirect:/alirizaaynaci";
+    @GetMapping("/admin-profile")
+    public String adminProfilePage(Model model) {
+        commonService.prepareModelForProfile(model);
+        return "admin-profile";
     }
 
     @GetMapping("/admin/create-profile")
-    public String createExperienceForm(Model model) {
+    public String createProfileForm(Model model) {
         if (authenticationService.getAdminExists()) {
             model.addAttribute("adminExists", authenticationService.getAdminExists());
             model.addAttribute("profile", new Profile());
@@ -49,9 +48,33 @@ public class ProfileController {
         return "redirect:/";
     }
 
+    @GetMapping("/admin/update-profile-form")
+    public String updateprofile(Model model) {
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            model.addAttribute("profile", new Profile());
+            return "updateProfile";
+        }
+        return "redirect:/";
+    }
+
     @PostMapping("/admin/add-profile")
-    public String createProfile(@ModelAttribute Profile profile) {
+    public String createProfile(@ModelAttribute Profile profile, Model model) {
         profileService.createProfile(profile);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            return "redirect:/admin-profile";
+        }
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/admin/update-profile")
+    public String updateProfile(@ModelAttribute Profile updatedProfile, Model model) {
+        profileService.updateProfile(updatedProfile);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            return "redirect:/admin-profile";
+        }
         return "redirect:/profile";
     }
 }

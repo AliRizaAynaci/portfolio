@@ -12,14 +12,8 @@
           <img src="/images/profile_photo.jpg">
         </button>
         <div id="menu">
-          <a th:if="${adminExists}" href="/admin/create-education">Add Education</a>
-          <a th:if="${adminExists}" href="/admin/create-project">Add Projects</a>
-          <a th:if="${adminExists}" href="/admin/create-experience">Add Experience</a>
-          <a th:if="${adminExists}" href="/admin/create-post">Add Post</a>
-          <a th:if="${adminExists}" href="/admin/create-profile">Add Profile</a>
           <a th:href="@{/profile}">Profile</a>
-          <a th:if="${adminExists}" href="/logout">Logout</a>
-          <a th:unless="${adminExists}" href="/login">Login</a>
+          <a href="/login">Login</a>
         </div>
       </div>
     </div>

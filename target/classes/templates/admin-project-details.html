@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Details</title>
+  <link rel="stylesheet" th:href="@{/css/details.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+  <h1>Project Details</h1>
+  <div th:if="${project}">
+    <th:block th:each="project : ${project}">
+      <h2 th:text="${project.projectName} "></h2>
+      <p id="content" th:text="${project.description}"></p>
+      <a id="link" th:href="${project.link}" target="_blank" rel="noopener noreferrer" th:text="${project.link}"></a>
+    </th:block>
+  </div>
+  <div th:unless="${project}">
+    <h2>Project not found</h2>
+  </div>
+  <script src="/script/admin.js"></script>
+</body>
+</html>

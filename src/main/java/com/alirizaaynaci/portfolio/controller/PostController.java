@@ -44,6 +44,16 @@ public class PostController {
         return "post-details";
     }
 
+    @GetMapping("/admin-posts/{postId}")
+    public String getPostByIdForAdmin(@PathVariable Long postId, Model model) {
+        Optional<Post> posts = postService.getPostById(postId);
+        posts.ifPresent(post -> model.addAttribute("post", posts));
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+        }
+        return "admin-post-details";
+    }
+
     @GetMapping("/admin/create-post")
     public String createPostForm(Model model) {
         if (authenticationService.getAdminExists()) {
@@ -55,8 +65,12 @@ public class PostController {
     }
 
     @PostMapping("/admin/add-post")
-    public String createPost(@ModelAttribute Post post) {
+    public String createPost(@ModelAttribute Post post, Model model) {
         postService.createPost(post);
+        if (authenticationService.getAdminExists()) {
+            model.addAttribute("adminExists", authenticationService.getAdminExists());
+            return "redirect:/admin-home";
+        }
         return "redirect:/";
     }
 

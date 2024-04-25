@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ali Rıza Aynacı</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/details.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+<h1>My Profile</h1>
+<div th:if="${profile}">
+  <h2 th:text="${profile.username}"></h2>
+  <p><strong>GitHub:</strong> <a th:href="${profile.githubUrl}" th:text="${profile.githubUrl}"></a></p>
+  <p><strong>LinkedIn:</strong> <a th:href="${profile.linkedinUrl}" th:text="${profile.linkedinUrl}"></a></p>
+  <p><strong>E-posta:</strong> <a th:href="'mailto:' + ${profile.emailAddress}" th:text="${profile.emailAddress}"></a></p>
+</div>
+
+<script src="/script/admin.js"></script>
+
+</body>
+</html>

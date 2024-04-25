@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Education Details</title>
+  <link rel="stylesheet" th:href="@{/css/details.css}" />
+  <link rel="stylesheet" th:href="@{/css/admin.css}" />
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div th:replace="admin-header :: header"></div>
+  <h1>Education Details</h1>
+  <div th:if="${education}">
+    <h2 th:text="'Institution: ' + ${education.institution}"></h2>
+    <p th:text="'Degree: ' + ${education.degree}"></p>
+    <p th:text="'Department: ' + ${education.department}"></p>
+  </div>
+  <div th:unless="${education}">
+    <p>Education not found</p>
+  </div>
+  <script src="/script/admin.js"></script>
+</body>
+</html>
