@@ -1,686 +1,465 @@
-/* Stats/Dashboard Layout */
-.dashboard-container {
-    max-width: 1800px;
-    /* Significantly wider layout */
-    width: 98%;
-    /* Use almost full width to reduce side margins */
-    margin: 0 auto;
-    padding: 0 16px;
-    /* Reduced padding */
+/* ===========================================================
+   Stats / sidebar widgets — TechStack, LeetCode, GitHub
+   Unified with the design system in globals.css
+   =========================================================== */
+
+/* ---------- Shared widget shell ---------- */
+
+.tech-stack,
+.leetcode-stats,
+.github-stats {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
 }
 
-.dashboard-section {
-    padding: 40px 0;
+.tech-stack .section-title,
+.leetcode-stats .section-title,
+.github-stats .section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 340px 1fr 300px;
-    /* Fixed sidebars, wide center */
-    gap: 24px;
-    /* Reduced gap to save space */
-    align-items: flex-start;
+.leetcode-link,
+.github-link {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  transition: color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out);
 }
 
-@media (max-width: 1200px) {
-    .dashboard-grid {
-        grid-template-columns: 320px 1fr;
-        /* Also widen on tablet */
-    }
-
-    .right-sidebar {
-        /* Move right sidebar to full width bottom */
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-    }
+.widget-link svg {
+  width: 14px;
+  height: 14px;
 }
 
-@media (max-width: 900px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .right-sidebar {
-        grid-template-columns: 1fr;
-    }
+.widget-kicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 7px;
+  letter-spacing: 0;
 }
 
-
-/* Column Styles */
-.sidebar-column {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+.leetcode-link:hover,
+.github-link:hover {
+  color: var(--accent);
+  background: var(--bg-elev-2);
 }
 
-.main-column {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    /* Reduced from 40px */
-}
-
-/* Global Section Title */
-.section__title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 24px;
-    /* Reduced from 32px */
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-
-
-/* Tech Stack */
-.tech-stack {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    /* Reduced from 24px to give more space to grid */
-}
-
-.tech-stack .section-title {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
-}
+/* ---------- Tech Stack ---------- */
 
 .tech-stack__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    /* 4 Columns */
-    gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 
 .tech-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 6px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    aspect-ratio: 1;
-    /* Square */
-    min-height: auto;
-    /* Let it scale */
-}
-
-/* YouTube Channel Button */
-.youtube-channel-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #FF0000;
-    /* YouTube Red */
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    /* Circle like a logo */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
-}
-
-.youtube-channel-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
-}
-
-.youtube-channel-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-}
-
-/* Adjust sidebar header alignment */
-.sidebar-header .section-title {
-    font-size: 1.1rem;
-    font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: var(--bg-elev-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  overflow: hidden;
+  transition: transform var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out);
 }
 
 .tech-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-    background: var(--card-bg);
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: var(--bg-elev);
 }
 
 .tech-item__icon {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
-    /* Inner padding for logo */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tech-item__icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    /* Add a slight drop shadow to make dark logos pop on dark bg */
-    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
 }
 
-/* LeetCode Stats */
-.leetcode-stats {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
+[data-theme="light"] .tech-item__icon img {
+  filter: none;
 }
 
-.leetcode-stats .section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
+.tech-item__name {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg-elev) 92%, transparent);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity var(--t-fast) var(--ease-out),
+    transform var(--t-fast) var(--ease-out);
 }
 
-.leetcode-link {
-    font-size: 1rem;
-    color: var(--accent);
-    text-decoration: none;
+.tech-item:hover .tech-item__name,
+.tech-item:focus-visible .tech-item__name {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- LeetCode ---------- */
+
+.leetcode-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .leetcode-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
 }
 
 .leetcode-total {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .leetcode-total__count {
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--text-primary);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0;
+  line-height: 1;
+  font-feature-settings: "tnum" 1;
 }
 
 .leetcode-total__label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.04em;
 }
 
 .leetcode-rank {
-    text-align: right;
+  text-align: right;
 }
 
 .leetcode-rank__label {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
 }
 
 .leetcode-rank__val {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-feature-settings: "tnum" 1;
 }
 
-/* Progress Bar */
 .leetcode-progress {
-    width: 100%;
-    height: 8px;
-    background: var(--bg);
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    margin-bottom: 16px;
+  width: 100%;
+  height: 6px;
+  background: var(--bg-elev-2);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .progress-bar {
-    display: flex;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 .progress-segment {
-    height: 100%;
+  height: 100%;
+  transition: opacity var(--t-fast) var(--ease-out);
 }
 
-.progress-segment.easy {
-    background-color: #00b8a3;
-}
+.progress-segment.easy   { background: #00b8a3; }
+.progress-segment.medium { background: #ffc01e; }
+.progress-segment.hard   { background: #ff375f; }
 
-.progress-segment.medium {
-    background-color: #ffc01e;
-}
-
-.progress-segment.hard {
-    background-color: #ff375f;
-}
-
-/* Details */
 .leetcode-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .stat-item {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .stat-label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    margin-bottom: 2px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.stat-label.easy-text {
-    color: #00b8a3;
-}
+.stat-label.easy-text   { color: #00b8a3; }
+.stat-label.medium-text { color: #d99100; }
+.stat-label.hard-text   { color: #ff375f; }
 
-.stat-label.medium-text {
-    color: #ffc01e;
-}
-
-.stat-label.hard-text {
-    color: #ff375f;
-}
+[data-theme="dark"] .stat-label.medium-text { color: #ffc01e; }
 
 .stat-value {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-feature-settings: "tnum" 1;
 }
 
 .stat-total {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    font-weight: 400;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 1px;
 }
 
-/* GitHub Stats */
-.github-stats {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-}
-
-.github-stats .section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
-}
-
-.github-link {
-    font-size: 1rem;
-    color: var(--accent);
-    text-decoration: none;
-}
+/* ---------- GitHub ---------- */
 
 .github-card {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .github-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .github-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--bg);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-elev-2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .github-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .github-info {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .github-username {
-    font-weight: 600;
-    color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .github-bio {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    line-height: 1.2;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .github-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    background: var(--bg);
-    padding: 12px;
-    border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
 .metric-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 12px 10px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
+.metric-item:nth-child(2n) { border-right: none; }
+.metric-item:nth-last-child(-n+2) { border-bottom: none; }
+
 .metric-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-feature-settings: "tnum" 1;
+  line-height: 1.1;
 }
 
 .metric-label {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
 }
 
-.github-view-btn {
-    display: block;
-    text-align: center;
-    background: var(--button-bg);
-    color: var(--button-text);
-    padding: 8px;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background 0.2s;
-    border: 1px solid var(--border);
-}
-
-.github-view-btn:hover {
-    background: var(--button-hover-bg);
-}
-
-/* Latest Videos (Mini Card Style for Sidebar) */
-.sidebar-videos .video-card {
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    color: inherit;
-    margin-bottom: 16px;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.2s;
-}
-
-.sidebar-videos .video-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent);
-}
-
-.sidebar-videos .video-card__thumbnail {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16/9;
-}
-
-.sidebar-videos .video-card__thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.sidebar-videos .video-card__play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-}
-
-.sidebar-videos .video-card__play svg {
-    width: 16px;
-    height: 16px;
-}
-
-.sidebar-videos .video-card__info {
-    padding: 12px;
-}
-
-.sidebar-videos .video-card__title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin: 0 0 6px 0;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.sidebar-videos .video-card__date {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-/* Global Section Title */
-.section__title {
-    font-size: 1.75rem;
-    /* Approx 28px to match Hero Name */
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-
-/* Recent Posts - Minimal Header Style */
-.post-list {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-}
-
-.post-card {
-    background: transparent;
-    border: none;
-    padding: 0;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 32px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease;
-}
-
-.post-card:last-child {
-    border-bottom: none;
-}
-
-.post-card:hover {
-    transform: none;
-}
-
-/* Header: Date • #tag1 #tag2 */
-.post-card__header {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-}
-
-.post-card__date {
-    font-family: var(--font-mono);
-    font-weight: 500;
-    color: var(--text-secondary);
-}
-
-.post-card__separator {
-    color: var(--border);
-}
-
-.post-card__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.post-card__tag {
-    color: var(--accent);
-    background: transparent;
-    padding: 0;
-    border: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.post-card__title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0 0 12px 0;
-    line-height: 1.3;
-    transition: color 0.2s ease;
-}
-
-.post-card:hover .post-card__title {
-    color: var(--accent);
-}
-
-.post-card__excerpt {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin: 0 0 16px 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.post-card__read-more {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    font-weight: 600;
-    margin-top: auto;
-}
-
-.post-card__read-more svg {
-    transition: transform 0.2s ease;
-}
-
-.post-card:hover .post-card__read-more svg {
-    transform: translateX(4px);
-}
-
-.view-channel-btn {
-    display: block;
-    text-align: center;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    margin-top: 12px;
-}
-
-.view-channel-btn:hover {
-    background: var(--border);
-    color: var(--accent);
-}
-
-/* Language Progress Bar */
 .github-langs {
-    margin-top: 16px;
-    background: var(--bg);
-    padding: 12px;
-    border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .subset-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .lang-progress {
-    display: flex;
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 8px;
+  display: flex;
+  height: 6px;
+  background: var(--bg-elev-2);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .lang-segment {
-    height: 100%;
+  height: 100%;
 }
 
 .lang-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
 }
 
 .lang-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-}
-
-.lang-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
 }
 
 .lang-name {
-    color: var(--text-primary);
-    font-weight: 500;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .lang-percent {
-    color: var(--text-secondary);
-    margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-left: auto;
+  font-size: 11px;
+}
+
+.github-contributions {
+  margin-top: 4px;
+}
+
+.github-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-elev-2);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color var(--t-fast) var(--ease-out),
+    background var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
+}
+
+.github-view-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.github-view-btn:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-elev);
+  color: var(--accent);
+}
+
+/* ---------- Skeletons inside widgets ---------- */
+
+.loading-skeleton .leetcode-stats__skeleton,
+.loading-skeleton .github-stats__skeleton {
+  height: 160px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--bg-elev-2) 0%,
+    var(--tag-bg) 50%,
+    var(--bg-elev-2) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
 }

@@ -55,11 +55,11 @@ export default function BlogPost() {
 
                 if (found) {
                     setPost(found);
-                    // Check if content is empty or too short (RSS limitation)
+                    setFullContent(found.content || "");
+                    // Check if content is empty or too short (RSS limitation).
+                    // Keep the RSS body visible while the richer article fetch tries.
                     if (!found.content || found.content.length < 1000) {
                         fetchFullContent(found.link);
-                    } else {
-                        setFullContent(found.content);
                     }
                 }
             } catch (err) {
@@ -164,6 +164,8 @@ export default function BlogPost() {
     const processContent = (html) => {
         if (!html) return "";
         let content = html;
+        content = content.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+        content = content.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "");
         content = content.replace(/<figcaption[^>]*>.*?<\/figcaption>/gi, "");
         // Convert <br> tags inside <pre> blocks to \n for proper highlighting
         content = content.replace(/<pre[^>]*>([\s\S]*?)<\/pre>/gi, (match, code) => {
@@ -233,17 +235,20 @@ export default function BlogPost() {
                 <article className="article">
                     <div className="article__inner">
                         <Link href="/" className="article__back">
-                            ← Back to posts
+                            <span aria-hidden="true">←</span>
+                            Back to posts
                         </Link>
 
-                        <time className="article__date">{formatDate(post.pubDate)}</time>
+                        <time className="article__meta" dateTime={post.pubDate}>
+                            {formatDate(post.pubDate)}
+                        </time>
                         <h1 className="article__title">{post.title}</h1>
 
                         {post.categories && post.categories.length > 0 && (
                             <div className="article__tags">
                                 {post.categories.map((cat) => (
-                                    <span key={cat} className="post-card__tag">
-                                        {cat}
+                                    <span key={cat} className="tag">
+                                        {cat.toLowerCase()}
                                     </span>
                                 ))}
                             </div>
@@ -259,13 +264,12 @@ export default function BlogPost() {
                     </div>
                 </article>
 
-                {/* Sidebar */}
-                <aside className="comments-sidebar">
-                    <div className="comments-sidebar__inner">
-                        {/* Actions (Like + Read) moved here */}
-                        <div className="article__actions-sidebar">
+                <aside className="comments-rail">
+                    <div>
+                        <div className="article-actions">
                             <button
-                                className={`article__like-btn ${liked ? "article__like-btn--liked" : ""}`}
+                                type="button"
+                                className={`like-btn ${liked ? "like-btn--liked" : ""}`}
                                 onClick={handleLike}
                                 aria-label={liked ? "Unlike this post" : "Like this post"}
                             >
@@ -284,7 +288,7 @@ export default function BlogPost() {
                                 href={post.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="article__read-on-sidebar"
+                                className="read-on"
                             >
                                 Read on Medium →
                             </a>
@@ -327,7 +331,7 @@ export default function BlogPost() {
                             <div className="comments__list">
                                 {comments.map((comment) => (
                                     <div key={comment.id} className="comment">
-                                        <div className="comment__header">
+                                        <div className="comment__head">
                                             <span className="comment__author">{comment.name}</span>
                                             <time className="comment__date">
                                                 {formatCommentDate(comment.date)}
@@ -335,8 +339,10 @@ export default function BlogPost() {
                                         </div>
                                         <p className="comment__text">{comment.text}</p>
                                         <button
+                                            type="button"
                                             className="comment__delete"
                                             onClick={() => handleDeleteComment(comment.id)}
+                                            aria-label="Delete comment"
                                         >
                                             ×
                                         </button>
