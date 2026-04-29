@@ -26,6 +26,9 @@ export default function BlogPost() {
     const [comments, setComments] = useState([]);
     const [commentName, setCommentName] = useState("");
     const [commentText, setCommentText] = useState("");
+    const [commentSubmitting, setCommentSubmitting] = useState(false);
+    const [commentError, setCommentError] = useState("");
+    const [likePending, setLikePending] = useState(false);
 
     const storageKey = slug ? `blog_${slug}` : null;
     const contentRef = useRef(null);
@@ -106,9 +109,12 @@ export default function BlogPost() {
         }
     }, [fullContent]);
 
-    // Load likes & comments from localStorage
+    // Load persisted browser state first, then replace counts/comments with Supabase data.
     useEffect(() => {
         if (!storageKey) return;
+
+        let cancelled = false;
+
         try {
             const savedLike = localStorage.getItem(`${storageKey}_liked`);
             const savedLikeCount = localStorage.getItem(`${storageKey}_likes`);
@@ -119,24 +125,77 @@ export default function BlogPost() {
         } catch (e) {
             // Ignore
         }
-    }, [storageKey]);
 
-    const handleLike = () => {
-        if (!storageKey) return;
+        async function loadInteractions() {
+            try {
+                const response = await fetch(
+                    `/api/blog-interactions?slug=${encodeURIComponent(slug)}`
+                );
+                if (!response.ok) throw new Error("Failed to load interactions");
+
+                const data = await response.json();
+                if (cancelled) return;
+
+                setLikeCount(Number(data.likeCount) || 0);
+                setComments(Array.isArray(data.comments) ? data.comments : []);
+            } catch (error) {
+                console.warn("Using local blog interactions fallback:", error);
+            }
+        }
+
+        loadInteractions();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [slug, storageKey]);
+
+    const handleLike = async () => {
+        if (!storageKey || likePending) return;
+
         const newLiked = !liked;
         const newCount = newLiked ? likeCount + 1 : Math.max(0, likeCount - 1);
         setLiked(newLiked);
         setLikeCount(newCount);
         localStorage.setItem(`${storageKey}_liked`, String(newLiked));
         localStorage.setItem(`${storageKey}_likes`, String(newCount));
+        setLikePending(true);
+
+        try {
+            const response = await fetch("/api/blog-interactions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "like",
+                    slug,
+                    delta: newLiked ? 1 : -1,
+                }),
+            });
+
+            if (!response.ok) throw new Error("Failed to update like");
+
+            const data = await response.json();
+            const nextCount = Number(data.likeCount);
+            if (Number.isFinite(nextCount)) {
+                setLikeCount(nextCount);
+                localStorage.setItem(`${storageKey}_likes`, String(nextCount));
+            }
+        } catch (error) {
+            console.warn("Using local like fallback:", error);
+        } finally {
+            setLikePending(false);
+        }
     };
 
-    const handleCommentSubmit = (e) => {
+    const handleCommentSubmit = async (e) => {
         e.preventDefault();
-        if (!commentText.trim() || !storageKey) return;
+        if (!commentText.trim() || !storageKey || commentSubmitting) return;
+
+        setCommentSubmitting(true);
+        setCommentError("");
 
         const newComment = {
-            id: Date.now(),
+            id: `local-${Date.now()}`,
             name: commentName.trim() || "Anonymous",
             text: commentText.trim(),
             date: new Date().toISOString(),
@@ -150,15 +209,35 @@ export default function BlogPost() {
             `${storageKey}_comments`,
             JSON.stringify(updatedComments)
         );
-    };
 
-    const handleDeleteComment = (id) => {
-        const updatedComments = comments.filter((c) => c.id !== id);
-        setComments(updatedComments);
-        localStorage.setItem(
-            `${storageKey}_comments`,
-            JSON.stringify(updatedComments)
-        );
+        try {
+            const response = await fetch("/api/blog-interactions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "comment",
+                    slug,
+                    name: newComment.name,
+                    text: newComment.text,
+                }),
+            });
+
+            if (!response.ok) throw new Error("Failed to save comment");
+
+            const data = await response.json();
+            if (data.comment) {
+                setComments((current) =>
+                    current.map((comment) =>
+                        comment.id === newComment.id ? data.comment : comment
+                    )
+                );
+            }
+        } catch (error) {
+            console.warn("Comment stored locally only:", error);
+            setCommentError("Comment is saved locally until the comment service is ready.");
+        } finally {
+            setCommentSubmitting(false);
+        }
     };
 
     const processContent = (html) => {
@@ -271,6 +350,7 @@ export default function BlogPost() {
                                 type="button"
                                 className={`like-btn ${liked ? "like-btn--liked" : ""}`}
                                 onClick={handleLike}
+                                disabled={likePending}
                                 aria-label={liked ? "Unlike this post" : "Like this post"}
                             >
                                 <svg
@@ -320,11 +400,15 @@ export default function BlogPost() {
                             <button
                                 type="submit"
                                 className="comments__submit"
-                                disabled={!commentText.trim()}
+                                disabled={!commentText.trim() || commentSubmitting}
                             >
-                                Post Comment
+                                {commentSubmitting ? "Posting..." : "Post Comment"}
                             </button>
                         </form>
+
+                        {commentError && (
+                            <p className="comments__notice">{commentError}</p>
+                        )}
 
                         {/* Comments List */}
                         {comments.length > 0 && (
@@ -338,14 +422,6 @@ export default function BlogPost() {
                                             </time>
                                         </div>
                                         <p className="comment__text">{comment.text}</p>
-                                        <button
-                                            type="button"
-                                            className="comment__delete"
-                                            onClick={() => handleDeleteComment(comment.id)}
-                                            aria-label="Delete comment"
-                                        >
-                                            ×
-                                        </button>
                                     </div>
                                 ))}
                             </div>
