@@ -1,4 +1,5 @@
 const OWNER = "AliRizaAynaci";
+const CACHE_DURATION = 30 * 60 * 1000;
 
 const CURATED_PROJECTS = [
     {
@@ -24,14 +25,14 @@ const CURATED_PROJECTS = [
         title: "Liftio Backend",
         category: "Product Demo / Go Backend",
         description:
-            "A public demo of the real Liftio backend, demonstrating architecture and coding style while the complete product implementation stays private.",
+            "A public demo of the Liftio backend, demonstrating architecture and coding style while the complete product implementation stays private.",
         stack: ["Go", "Docker", "REST API", "Backend Architecture"],
         repos: ["liftio-backend"],
     },
     {
-        id: "clean-breathing",
+        id: "nasa-space-apps",
         title: "NASA Space Apps Challenge",
-        category: "Hackathon / AI + Backend",
+        category: "Hackathon + AI + Backend",
         achievement: "Local 2nd Place · Global Nominee",
         description:
             "A multi-repo clean-air project combining backend, frontend, and ML components for NASA Space Apps.",
@@ -41,7 +42,7 @@ const CURATED_PROJECTS = [
     {
         id: "tua-hackathon",
         title: "TUA Hackathon",
-        category: "Hackathon / Optimization",
+        category: "Hackathon + Optimization",
         achievement: "Local 4th Place",
         description:
             "An optimization-focused hackathon project built for the Turkish Space Agency competition.",
@@ -54,7 +55,7 @@ const CURATED_PROJECTS = [
         category: "Distributed Systems",
         description:
             "A technical deep dive demonstrating Redis sharding and distribution strategies.",
-        stack: ["Redis", "Distributed Systems", "Sharding"],
+        stack: ["Redis", "Distributed Systems", "Sharding", "Go"],
         repos: ["redis-sharding-demo"],
     },
     {
@@ -72,71 +73,17 @@ const CURATED_PROJECTS = [
         category: "Engineering Demo",
         description:
             "A compact distributed-systems demo and article companion for exploring Raft concepts.",
-        stack: ["Distributed Systems", "Raft", "Consensus"],
+        stack: ["Distributed Systems", "Raft", "Consensus", "Go"],
         repos: ["raft-demo"],
     },
 ];
 
 let cache = null;
 let cacheTime = 0;
-let profileHtmlPromise = null;
-const CACHE_DURATION = 10 * 60 * 1000;
-
-function repoUrl(name) {
-    return `https://github.com/${OWNER}/${name}`;
-}
-
-function escapeRegExp(value) {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function decodeHtml(value = "") {
-    const named = {
-        amp: "&",
-        lt: "<",
-        gt: ">",
-        quot: '"',
-        apos: "'",
-        nbsp: " ",
-    };
-
-    return value.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (entity, code) => {
-        if (code[0] === "#") {
-            const isHex = code[1]?.toLowerCase() === "x";
-            const parsed = parseInt(code.slice(isHex ? 2 : 1), isHex ? 16 : 10);
-            return Number.isFinite(parsed) ? String.fromCharCode(parsed) : entity;
-        }
-
-        return named[code.toLowerCase()] || entity;
-    });
-}
-
-function textFromHtml(html = "") {
-    return decodeHtml(
-        html
-            .replace(/<script[\s\S]*?<\/script>/gi, "")
-            .replace(/<style[\s\S]*?<\/style>/gi, "")
-            .replace(/<[^>]+>/g, " ")
-            .replace(/\s+/g, " ")
-            .trim()
-    );
-}
-
-function parseCompactCount(value = "") {
-    const clean = textFromHtml(value).replace(/,/g, "").trim().toLowerCase();
-    const match = clean.match(/^([\d.]+)\s*([km])?$/);
-    if (!match) return null;
-
-    const number = Number(match[1]);
-    if (!Number.isFinite(number)) return null;
-    if (match[2] === "m") return Math.round(number * 1_000_000);
-    if (match[2] === "k") return Math.round(number * 1_000);
-    return Math.round(number);
-}
 
 function getHeaders() {
     const headers = {
-        "User-Agent": "portfolio-app",
+        "User-Agent": "aynacialiriza.me/1.0",
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     };
@@ -148,96 +95,8 @@ function getHeaders() {
     return headers;
 }
 
-async function fetchProfileHtml() {
-    if (!profileHtmlPromise) {
-        profileHtmlPromise = fetch(`https://github.com/${OWNER}`, {
-            headers: {
-                "User-Agent":
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
-                Accept: "text/html",
-            },
-        })
-            .then((response) => (response.ok ? response.text() : ""))
-            .catch(() => "");
-    }
-
-    return profileHtmlPromise;
-}
-
-async function fetchRepoFromProfile(name) {
-    const html = await fetchProfileHtml();
-    if (!html) return null;
-
-    const section = html.match(
-        /<div[^>]*class="[^"]*js-pinned-items-reorder-container[^"]*"[\s\S]*?<\/ol>\s*<\/div>/i
-    )?.[0];
-    const items = section?.match(
-        /<li\b[^>]*class="[^"]*pinned-item-list-item[^"]*"[\s\S]*?<\/li>/gi
-    ) || [];
-    const item = items.find((candidate) =>
-        new RegExp(
-            `href="/${escapeRegExp(OWNER)}/${escapeRegExp(name)}"`,
-            "i"
-        ).test(candidate)
-    );
-
-    if (!item) return null;
-
-    const description = textFromHtml(
-        item.match(
-            /<p\b[^>]*class="[^"]*pinned-item-desc[^"]*"[^>]*>([\s\S]*?)<\/p>/i
-        )?.[1] || ""
-    );
-    const language = textFromHtml(
-        item.match(
-            /<span\b[^>]*itemprop="programmingLanguage"[^>]*>([\s\S]*?)<\/span>/i
-        )?.[1] || ""
-    );
-    const id = item.match(
-        /<a\b[^>]*\bid="(\d+)"[^>]*\bhref="\/[^"]+\/[^"]+"/i
-    )?.[1];
-    const stars = parseCompactCount(
-        item.match(
-            new RegExp(
-                `href="/${escapeRegExp(OWNER)}/${escapeRegExp(name)}/stargazers"[\\s\\S]*?<\\/svg>\\s*([^<]+)`,
-                "i"
-            )
-        )?.[1] || ""
-    );
-    const forks = parseCompactCount(
-        item.match(
-            new RegExp(
-                `href="/${escapeRegExp(OWNER)}/${escapeRegExp(name)}/forks"[\\s\\S]*?<\\/svg>\\s*([^<]+)`,
-                "i"
-            )
-        )?.[1] || ""
-    );
-
-    return {
-        id: id ? Number(id) : `${OWNER}/${name}`,
-        name,
-        full_name: `${OWNER}/${name}`,
-        html_url: repoUrl(name),
-        homepage: "",
-        description,
-        language: language || null,
-        stargazers_count: stars,
-        forks_count: forks,
-        updated_at: null,
-    };
-}
-
-async function fetchRepo(name) {
-    try {
-        const response = await fetch(
-            `https://api.github.com/repos/${OWNER}/${name}`,
-            { headers: getHeaders() }
-        );
-        return response.ok ? response.json() : fetchRepoFromProfile(name);
-    } catch (error) {
-        console.error(`Failed to fetch ${OWNER}/${name}:`, error);
-        return fetchRepoFromProfile(name);
-    }
+function repoUrl(name) {
+    return `https://github.com/${OWNER}/${name}`;
 }
 
 function fallbackRepo(name) {
@@ -271,20 +130,11 @@ function compactRepo(repo, name) {
                 ? source.stargazers_count
                 : null,
         forks:
-            typeof source.forks_count === "number" ? source.forks_count : null,
+            typeof source.forks_count === "number"
+                ? source.forks_count
+                : null,
         updatedAt: source.updated_at || null,
     };
-}
-
-function latestDate(repos) {
-    return repos
-        .map((repo) => (repo.updatedAt ? new Date(repo.updatedAt) : null))
-        .filter((date) => date && !Number.isNaN(date.getTime()))
-        .sort((a, b) => b - a)[0]?.toISOString() || null;
-}
-
-function firstLiveUrl(repos) {
-    return repos.find((repo) => repo.liveUrl)?.liveUrl || "";
 }
 
 function sumMetric(repos, key) {
@@ -296,13 +146,45 @@ function sumMetric(repos, key) {
     return values.reduce((total, value) => total + value, 0);
 }
 
+function latestDate(repos) {
+    return (
+        repos
+            .map((repo) => (repo.updatedAt ? new Date(repo.updatedAt) : null))
+            .filter((date) => date && !Number.isNaN(date.getTime()))
+            .sort((a, b) => b - a)[0]?.toISOString() || null
+    );
+}
+
+function firstLiveUrl(repos) {
+    return repos.find((repo) => repo.liveUrl)?.liveUrl || "";
+}
+
+async function fetchRepos() {
+    const response = await fetch(
+        `https://api.github.com/users/${OWNER}/repos?per_page=100&sort=updated&type=owner`,
+        { headers: getHeaders() }
+    );
+
+    if (!response.ok) {
+        throw new Error(`GitHub repos failed: ${response.status}`);
+    }
+
+    const repos = await response.json();
+    if (!Array.isArray(repos)) return new Map();
+
+    return new Map(
+        repos
+            .filter((repo) => !repo.fork && !repo.archived)
+            .map((repo) => [repo.name, repo])
+    );
+}
+
 function buildProject(project, repoMap) {
     const repos = project.repos.map((name) => compactRepo(repoMap.get(name), name));
-    const primaryRepo = repos[0];
 
     return {
         ...project,
-        githubUrl: primaryRepo.githubUrl,
+        githubUrl: repos[0]?.githubUrl || repoUrl(project.repos[0]),
         liveUrl: firstLiveUrl(repos),
         stars: sumMetric(repos, "stars"),
         forks: sumMetric(repos, "forks"),
@@ -316,19 +198,17 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
-    try {
-        const now = Date.now();
-        if (cache && now - cacheTime < CACHE_DURATION) {
-            return res.status(200).json({ projects: cache });
-        }
-
-        const repoNames = [
-            ...new Set(CURATED_PROJECTS.flatMap((project) => project.repos)),
-        ];
-        const repoResults = await Promise.all(repoNames.map(fetchRepo));
-        const repoMap = new Map(
-            repoNames.map((name, index) => [name, repoResults[index]])
+    const now = Date.now();
+    if (cache && now - cacheTime < CACHE_DURATION) {
+        res.setHeader(
+            "Cache-Control",
+            "public, s-maxage=1800, stale-while-revalidate=3600"
         );
+        return res.status(200).json({ projects: cache });
+    }
+
+    try {
+        const repoMap = await fetchRepos();
         const projects = CURATED_PROJECTS.map((project) =>
             buildProject(project, repoMap)
         );
@@ -338,16 +218,18 @@ export default async function handler(req, res) {
 
         res.setHeader(
             "Cache-Control",
-            "public, s-maxage=600, stale-while-revalidate=1200"
+            "public, s-maxage=1800, stale-while-revalidate=3600"
         );
         return res.status(200).json({ projects });
     } catch (error) {
         console.error("Error fetching curated GitHub projects:", error);
-        if (cache) return res.status(200).json({ projects: cache });
+        if (cache) return res.status(200).json({ projects: cache, stale: true });
 
-        const fallbackProjects = CURATED_PROJECTS.map((project) =>
-            buildProject(project, new Map())
-        );
-        return res.status(200).json({ projects: fallbackProjects, fallback: true });
+        return res.status(200).json({
+            projects: CURATED_PROJECTS.map((project) =>
+                buildProject(project, new Map())
+            ),
+            fallback: true,
+        });
     }
 }

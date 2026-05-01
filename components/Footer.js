@@ -1,36 +1,32 @@
-const LINKS = [
-    { label: "GitHub", href: "https://github.com/AliRizaAynaci" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/alirizaaynaci" },
-    { label: "Medium", href: "https://medium.com/@aynacialiriza" },
-    { label: "YouTube", href: "https://www.youtube.com/@aynacialiriza" },
-    { label: "Email", href: "mailto:aynacialiriza@gmail.com" },
-];
-
 export default function Footer() {
     return (
-        <footer className="footer">
-            <div className="footer__inner">
-                <div className="footer__brand">
-                    <span>© {new Date().getFullYear()} Ali Rıza Aynacı</span>
+        <footer className="eq-footer">
+            <div className="eq-footer__inner">
+                <div>
+                    <div className="eq-footer__brand">The Aynacı Quarterly</div>
+                    <div className="eq-footer__brand-meta">Est. 2024 · Kayseri</div>
                 </div>
-                <nav aria-label="Social links">
-                    <div className="footer__links">
-                        {LINKS.map((link) => (
-                            <a
-                                key={link.label}
-                                href={link.href}
-                                target={link.href.startsWith("http") ? "_blank" : undefined}
-                                rel={
-                                    link.href.startsWith("http")
-                                        ? "noopener noreferrer"
-                                        : undefined
-                                }
-                            >
-                                {link.label}
-                            </a>
-                        ))}
+
+                <div className="eq-footer__col">
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                        <span>Email</span>
+                        <a href="mailto:aynacialiriza@gmail.com">aynacialiriza@gmail.com</a>
                     </div>
-                </nav>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                        <span>GitHub</span>
+                        <a href="https://github.com/AliRizaAynaci" target="_blank" rel="noopener noreferrer">@AliRizaAynaci</a>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                        <span>Medium</span>
+                        <a href="https://medium.com/@aynacialiriza" target="_blank" rel="noopener noreferrer">@aynacialiriza</a>
+                    </div>
+                </div>
+
+                <div className="eq-footer__notice">
+                    Typeset in Source Serif & JetBrains Mono ·<br />
+                    All opinions the writer&apos;s own ·<br />
+                    © {new Date().getFullYear()} Ali Rıza Aynacı
+                </div>
             </div>
         </footer>
     );

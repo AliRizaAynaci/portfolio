@@ -1,3 +1,5 @@
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY =
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
@@ -128,12 +130,36 @@ export default async function handler(req, res) {
         }
 
         if (req.method === "POST") {
+            const ip = clientIp(req);
+
+            const burst = rateLimit(`bi:burst:${ip}`, { limit: 20, windowMs: 60_000 });
+            if (!burst.ok) {
+                res.setHeader("Retry-After", String(burst.retryAfter));
+                return res.status(429).json({ error: "Too many requests" });
+            }
+
             if (req.body?.action === "comment") {
+                const commentLimit = rateLimit(`bi:comment:${ip}`, {
+                    limit: 3,
+                    windowMs: 5 * 60_000,
+                });
+                if (!commentLimit.ok) {
+                    res.setHeader("Retry-After", String(commentLimit.retryAfter));
+                    return res.status(429).json({ error: "Please wait before posting another comment" });
+                }
                 const comment = await addComment(slug, req.body);
                 return res.status(201).json({ comment });
             }
 
             if (req.body?.action === "like") {
+                const likeLimit = rateLimit(`bi:like:${ip}:${slug}`, {
+                    limit: 2,
+                    windowMs: 60 * 60_000,
+                });
+                if (!likeLimit.ok) {
+                    res.setHeader("Retry-After", String(likeLimit.retryAfter));
+                    return res.status(429).json({ error: "Like already recorded for this article" });
+                }
                 const delta = req.body?.delta > 0 ? 1 : -1;
                 const likeCount = await updateLike(slug, delta);
                 return res.status(200).json({ likeCount });

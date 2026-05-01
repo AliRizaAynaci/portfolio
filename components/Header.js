@@ -1,88 +1,120 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useTheme } from "@/lib/theme";
 
 const NAV = [
-    { href: "/", label: "Blog" },
+    { href: "/",         label: "Front" },
+    { href: "/writing",  label: "Writing" },
     { href: "/projects", label: "Projects" },
-    { href: "/about", label: "About" },
+    { href: "/stack",    label: "Stack" },
+    { href: "/about",    label: "About" },
+    { href: "/letters",  label: "Letters" },
 ];
+
+const ISSUE_NUMBER = 37;
+const VOL = "VOL. III";
+
+function formatLongDate(d) {
+    const day = d.toLocaleDateString("en-US", { weekday: "long" });
+    const month = d.toLocaleDateString("en-US", { month: "long" });
+    return `${day}, ${month} ${d.getDate()}, ${d.getFullYear()}`;
+}
 
 export default function Header() {
     const router = useRouter();
     const { theme, toggleTheme } = useTheme();
+    const [today, setToday] = useState(null);
 
-    const isActive = (path) => {
-        if (path === "/") {
-            return router.pathname === "/" || router.pathname.startsWith("/blog");
+    useEffect(() => {
+        setToday(new Date());
+    }, []);
+
+    const isActive = (href) => {
+        if (href === "/")        return router.pathname === "/";
+        if (href === "/writing") {
+            return router.pathname === "/writing" ||
+                router.pathname.startsWith("/writing/") ||
+                router.pathname.startsWith("/blog");
         }
-        return router.pathname === path || router.pathname.startsWith(path + "/");
+        return router.pathname === href || router.pathname.startsWith(href + "/");
     };
 
+    const editionLabel = (() => {
+        if (!today) return "EVE. ED.";
+        const h = today.getHours();
+        if (h < 5)  return "NIGHT ED.";
+        if (h < 12) return "MORN. ED.";
+        if (h < 18) return "DAY ED.";
+        return "EVE. ED.";
+    })();
+
     return (
-        <header className="header">
-            <div className="header__inner">
-                <Link href="/" className="header__logo" aria-label="Home">
-                    <img src="/logo.png" alt="" />
-                    <span>aynacialiriza</span>
-                </Link>
+        <>
+            <header className="masthead">
+                <div className="masthead__row">
+                    <div className="masthead__meta">
+                        <span><strong>{VOL}</strong> &nbsp;·&nbsp; <strong>NO. {ISSUE_NUMBER}</strong></span>
+                        <span>{today ? formatLongDate(today).toUpperCase() : ""}</span>
+                    </div>
 
-                <div className="header__right">
-                    <nav>
-                        <ul className="header__nav">
-                            {NAV.map((item) => (
-                                <li key={item.href}>
-                                    <Link
-                                        href={item.href}
-                                        className={isActive(item.href) ? "active" : ""}
-                                    >
-                                        {item.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
+                    <Link href="/" className="masthead__title-wrap" aria-label="Home" style={{ textAlign: "center" }}>
+                        <h1 className="masthead__title">The Aynacı Quarterly</h1>
+                        <div className="masthead__sub">
+                            Backend &nbsp;·&nbsp; Distributed Systems &nbsp;·&nbsp; Occasional Opinions
+                        </div>
+                    </Link>
 
-                    <button
-                        className="theme-toggle"
-                        onClick={toggleTheme}
-                        aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                        title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-                    >
-                        {theme === "light" ? (
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    <div className="masthead__actions">
+                        <button
+                            type="button"
+                            className="action-chip"
+                            onClick={() => {
+                                const evt = new CustomEvent("aq:open-search");
+                                window.dispatchEvent(evt);
+                            }}
+                            aria-label="Search"
+                        >
+                            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
                             </svg>
-                        ) : (
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <circle cx="12" cy="12" r="4.5" />
-                                <line x1="12" y1="2" x2="12" y2="4" />
-                                <line x1="12" y1="20" x2="12" y2="22" />
-                                <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
-                                <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
-                                <line x1="2" y1="12" x2="4" y2="12" />
-                                <line x1="20" y1="12" x2="22" y2="12" />
-                                <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
-                                <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
-                            </svg>
-                        )}
-                    </button>
+                            <span>Search</span>
+                            <span className="action-chip__kbd">⌘K</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            className="action-chip"
+                            onClick={toggleTheme}
+                            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+                            title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+                        >
+                            <span>{editionLabel}</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
+
+            <nav className="topnav" aria-label="Primary">
+                <div className="topnav__inner">
+                    <ul className="topnav__list">
+                        {NAV.map((item, idx) => (
+                            <li key={item.href} style={{ display: "inline-flex", alignItems: "center" }}>
+                                <Link
+                                    href={item.href}
+                                    className={`topnav__link ${isActive(item.href) ? "is-active" : ""}`}
+                                >
+                                    {item.label}
+                                </Link>
+                                {idx < NAV.length - 1 && (
+                                    <span className="topnav__sep" aria-hidden="true">·</span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </nav>
+        </>
     );
 }

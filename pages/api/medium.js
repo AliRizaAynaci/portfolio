@@ -8,13 +8,9 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const username = (process.env.MEDIUM_USERNAME || "").replace(/^@/, "").trim();
-    if (!username) {
-        return res.status(500).json({
-            error:
-                "MEDIUM_USERNAME is not set. Add it to .env.local and restart the dev server.",
-        });
-    }
+    const username = (process.env.MEDIUM_USERNAME || "aynacialiriza")
+        .replace(/^@/, "")
+        .trim();
 
     try {
         const now = Date.now();
@@ -42,21 +38,20 @@ export default async function handler(req, res) {
         itemChunks.shift();
 
         const posts = itemChunks.map((chunk) => {
-            const extractTag = (tag, isCData = true) => {
-                const regex = isCData
-                    ? new RegExp(
-                          `<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`
-                      )
-                    : new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`);
-                const match = chunk.match(regex);
-                return match ? match[1].trim() : "";
+            const extractTag = (tag) => {
+                const match = chunk.match(
+                    new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tag}>`)
+                );
+                if (!match) return "";
+                const cdata = match[1].match(/^<!\[CDATA\[([\s\S]*?)\]\]>$/);
+                return (cdata ? cdata[1] : match[1]).trim();
             };
 
             const title = extractTag("title");
-            const link = extractTag("link", false);
-            const pubDate = extractTag("pubDate", false);
+            const link = extractTag("link");
+            const pubDate = extractTag("pubDate");
             const creator = extractTag("dc:creator");
-            const guid = extractTag("guid", false);
+            const guid = extractTag("guid");
 
             const contentMatch = chunk.match(
                 /<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/
